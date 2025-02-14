@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chronomètre Double - MULTICUIRS</title>
+    <title>Chronomètre Double</title>
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/LXWwWgs0/android-chrome-512x512.png"> <!-- Ajout du favicon -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,7 +15,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-image: url('https://i.postimg.cc/Wsmxghn4/Background-Chrono-Multicuirs.png'); /* Nouvelle image de fond */
+            background-image: url('https://i.postimg.cc/Wsmxghn4/Background-Chrono-Multicuirs.png'); /* Image de fond */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -58,17 +59,25 @@
             padding: 10px 20px;
             cursor: pointer;
         }
+        .editable {
+            border: none;
+            background: transparent;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: right;
+            width: 200px;
+        }
     </style>
 </head>
 <body>
-    <h1>Chronomètre Double - MULTICUIRS</h1>
+    <h1>Chronomètre Double</h1>
     <div class="chrono-container">
         <div class="chrono-box">
-            <span class="label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PROTO </span>
+            <input type="text" class="editable" id="label1" value="PROTO" />
             <div class="chrono" id="chrono1">0:00:00</div>
         </div>
         <div class="chrono-box">
-            <span class="label">DEVELOPPEMENT </span>
+            <input type="text" class="editable" id="label2" value="DEVELOPPEMENT" />
             <div class="chrono" id="chrono2">0:00:00</div>
         </div>
     </div>
