@@ -39,10 +39,15 @@
             text-align: left;
             width: 150px;
         }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
         button {
             font-size: 1.2em;
             padding: 10px 20px;
-            margin: 10px;
             cursor: pointer;
         }
     </style>
@@ -59,9 +64,11 @@
             <div class="chrono" id="chrono2">0:00:00</div>
         </div>
     </div>
-    <button onclick="startStop()">Démarrer/Arrêter (Entrée)</button>
-    <button onclick="switchChrono()">Changer de chrono (Espace)</button>
-    <button onclick="resetChrono()">Réinitialiser (R)</button>
+    <div class="button-container">
+        <button onclick="startStop()">Démarrer/Arrêter (Entrée)</button>
+        <button onclick="switchChrono()">Changer de chrono (Espace)</button>
+        <button onclick="resetChrono()">Réinitialiser (R)</button>
+    </div>
 
     <script>
         let chrono1 = 0, chrono2 = 0;
