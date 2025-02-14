@@ -2,10 +2,91 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Mon Chrono Web</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chronomètre Double</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .chrono {
+            font-size: 2em;
+            margin: 20px;
+        }
+        button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <h1>Mon Chrono Web</h1>
-    <p>Chronomètre en construction...</p>
+    <h1>Chronomètre Double</h1>
+    <div>
+        <div class="chrono" id="chrono1">0:00:00</div>
+        <div class="chrono" id="chrono2">0:00:00</div>
+    </div>
+    <button onclick="startStop()">Démarrer/Arrêter (Entrée)</button>
+    <button onclick="switchChrono()">Changer de chrono (Espace)</button>
+    <button onclick="resetChrono()">Réinitialiser (R)</button>
+
+    <script>
+        let chrono1 = 0, chrono2 = 0;
+        let activeChrono = 1;
+        let running = false;
+        let interval;
+
+        function updateChrono() {
+            document.getElementById("chrono1").textContent = formatTime(chrono1);
+            document.getElementById("chrono2").textContent = formatTime(chrono2);
+        }
+
+        function formatTime(seconds) {
+            let hrs = Math.floor(seconds / 3600);
+            let min = Math.floor((seconds % 3600) / 60);
+            let sec = seconds % 60;
+            return hrs + ":" + (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
+        }
+
+        function startStop() {
+            if (running) {
+                clearInterval(interval);
+            } else {
+                interval = setInterval(() => {
+                    if (activeChrono === 1) chrono1++;
+                    else chrono2++;
+                    updateChrono();
+                }, 1000);
+            }
+            running = !running;
+        }
+
+        function switchChrono() {
+            if (running) {
+                activeChrono = activeChrono === 1 ? 2 : 1;
+            }
+        }
+
+        function resetChrono() {
+            clearInterval(interval);
+            chrono1 = 0;
+            chrono2 = 0;
+            running = false;
+            updateChrono();
+        }
+
+        document.addEventListener("keydown", function(event) {
+            if (event.code === "Enter") {
+                startStop();
+            } else if (event.code === "Space") {
+                event.preventDefault(); // Empêche le scroll avec espace
+                switchChrono();
+            } else if (event.code === "KeyR") {
+                resetChrono();
+            }
+        });
+    </script>
 </body>
 </html>
