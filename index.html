@@ -10,9 +10,18 @@
             text-align: center;
             margin: 50px;
         }
+        .chrono-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px;
+        }
+        .label {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
         .chrono {
             font-size: 2em;
-            margin: 20px;
         }
         button {
             font-size: 1.2em;
@@ -24,8 +33,12 @@
 </head>
 <body>
     <h1>Chronomètre Double</h1>
-    <div>
+    <div class="chrono-container">
+        <span class="label">PROTO</span>
         <div class="chrono" id="chrono1">0:00:00</div>
+    </div>
+    <div class="chrono-container">
+        <span class="label">DEVELOPPEMENT</span>
         <div class="chrono" id="chrono2">0:00:00</div>
     </div>
     <button onclick="startStop()">Démarrer/Arrêter (Entrée)</button>
