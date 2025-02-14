@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chronomètre MULTICUIRS</title>
-    <link rel="icon" type="image/png" href="https://i.postimg.cc/LXWwWgs0/android-chrome-512x512.png"> <!-- Ajout du favicon -->
+    <title>Chronomètre Double</title>
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/NjQjJzFV/logo-c-HRONO.png"> <!-- Ajout du favicon -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -34,13 +34,15 @@
             align-items: center;
             justify-content: flex-end;
             gap: 15px;
-            width: 400px;
+            width: 500px;
         }
-        .label {
+        .editable {
+            border: none;
+            background: transparent;
             font-size: 1.5em;
             font-weight: bold;
             text-align: right;
-            min-width: 200px;
+            width: 250px;
         }
         .chrono {
             font-size: 2em;
@@ -59,18 +61,10 @@
             padding: 10px 20px;
             cursor: pointer;
         }
-        .editable {
-            border: none;
-            background: transparent;
-            font-size: 1.5em;
-            font-weight: bold;
-            text-align: right;
-            width: 200px;
-        }
     </style>
 </head>
 <body>
-    <h1>Chronomètre MULTICUIRS</h1>
+    <h1>Chronomètre Double</h1>
     <div class="chrono-container">
         <div class="chrono-box">
             <input type="text" class="editable" id="label1" value="PROTO" />
