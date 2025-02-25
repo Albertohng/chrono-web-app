@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chronomètre MULTICUIRS</title>
-    <link rel="icon" type="image/png" href="https://i.postimg.cc/bJhCkk3Q/Design-sans-titre-16.png"> <!-- Ajout du favicon -->
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/bJhCkk3Q/Design-sans-titre-16.png">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,7 +15,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-image: url('https://i.postimg.cc/Wsmxghn4/Background-Chrono-Multicuirs.png'); /* Image de fond */
+            background-image: url('https://i.postimg.cc/Wsmxghn4/Background-Chrono-Multicuirs.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -25,7 +25,7 @@
             flex-direction: column;
             align-items: center;
             margin: 20px;
-            background: rgba(255, 255, 255, 0.8); /* Fond semi-transparent pour la lisibilité */
+            background: rgba(255, 255, 255, 0.8);
             padding: 20px;
             border-radius: 10px;
         }
@@ -82,55 +82,107 @@
     </div>
 
     <script>
-        let chrono1 = 0, chrono2 = 0;
-        let activeChrono = 1;
+        // Définition des objets pour chaque chronomètre
+        const timer1 = {
+            baseTime: 0,    // Temps accumulé (en ms) avant la dernière reprise
+            startTime: null // Instant de démarrage en cours (en ms)
+        };
+        const timer2 = {
+            baseTime: 0,
+            startTime: null
+        };
+
+        let activeChrono = 1; // Chrono actif : 1 ou 2
         let running = false;
         let interval;
 
+        // Fonction de mise à jour des affichages
         function updateChrono() {
-            document.getElementById("chrono1").textContent = formatTime(chrono1);
-            document.getElementById("chrono2").textContent = formatTime(chrono2);
+            // Calculer le temps écoulé pour chaque chronomètre (en secondes)
+            let elapsed1 = timer1.baseTime;
+            if (timer1.startTime !== null) {
+                elapsed1 += Date.now() - timer1.startTime;
+            }
+            let elapsed2 = timer2.baseTime;
+            if (timer2.startTime !== null) {
+                elapsed2 += Date.now() - timer2.startTime;
+            }
+            document.getElementById("chrono1").textContent = formatTime(Math.floor(elapsed1 / 1000));
+            document.getElementById("chrono2").textContent = formatTime(Math.floor(elapsed2 / 1000));
         }
 
+        // Fonction de formatage du temps en hh:mm:ss
         function formatTime(seconds) {
-            let hrs = Math.floor(seconds / 3600);
-            let min = Math.floor((seconds % 3600) / 60);
-            let sec = seconds % 60;
+            const hrs = Math.floor(seconds / 3600);
+            const min = Math.floor((seconds % 3600) / 60);
+            const sec = seconds % 60;
             return hrs + ":" + (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
         }
 
+        // Démarrage ou arrêt du chronomètre actif
         function startStop() {
-            if (running) {
-                clearInterval(interval);
+            if (!running) {
+                // Démarrage : enregistrer l'instant de départ du chrono actif
+                if (activeChrono === 1) {
+                    timer1.startTime = Date.now();
+                } else {
+                    timer2.startTime = Date.now();
+                }
+                interval = setInterval(updateChrono, 1000);
             } else {
-                interval = setInterval(() => {
-                    if (activeChrono === 1) chrono1++;
-                    else chrono2++;
-                    updateChrono();
-                }, 1000);
+                // Arrêt : accumuler le temps écoulé et mettre fin à la session en cours
+                if (activeChrono === 1) {
+                    timer1.baseTime += Date.now() - timer1.startTime;
+                    timer1.startTime = null;
+                } else {
+                    timer2.baseTime += Date.now() - timer2.startTime;
+                    timer2.startTime = null;
+                }
+                clearInterval(interval);
             }
             running = !running;
         }
 
+        // Switch entre les deux chronomètres
         function switchChrono() {
             if (running) {
+                // Mettre en pause le chronomètre actif et démarrer l'autre
+                if (activeChrono === 1) {
+                    timer1.baseTime += Date.now() - timer1.startTime;
+                    timer1.startTime = null;
+                    activeChrono = 2;
+                    timer2.startTime = Date.now();
+                } else {
+                    timer2.baseTime += Date.now() - timer2.startTime;
+                    timer2.startTime = null;
+                    activeChrono = 1;
+                    timer1.startTime = Date.now();
+                }
+            } else {
+                // Si le chronomètre est arrêté, il suffit de changer l'actif
                 activeChrono = activeChrono === 1 ? 2 : 1;
             }
-        }
-
-        function resetChrono() {
-            clearInterval(interval);
-            chrono1 = 0;
-            chrono2 = 0;
-            running = false;
             updateChrono();
         }
 
+        // Réinitialisation des deux chronomètres
+        function resetChrono() {
+            clearInterval(interval);
+            timer1.baseTime = 0;
+            timer1.startTime = null;
+            timer2.baseTime = 0;
+            timer2.startTime = null;
+            running = false;
+            activeChrono = 1;
+            updateChrono();
+        }
+
+        // Gestion des raccourcis clavier
         document.addEventListener("keydown", function(event) {
             if (event.key === "Enter") {
                 startStop();
             } else if (event.key === " ") {
-                event.preventDefault(); // Empêche le scroll avec espace
+                event.preventDefault();
                 switchChrono();
             } else if (event.key.toLowerCase() === "r") {
                 resetChrono();
