@@ -24,42 +24,54 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 20px;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 10px;
+            max-width: 90%;
         }
         .chrono-box {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: flex-end;
-            gap: 15px;
-            width: 500px;
+            gap: 10px;
+            width: 100%;
         }
-        .editable {
-            border: none;
-            background: transparent;
+        .editable, .chrono {
             font-size: 1.5em;
             font-weight: bold;
-            text-align: right;
-            width: 250px;
-        }
-        .chrono {
-            font-size: 2em;
-            text-align: left;
-            width: 150px;
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
         }
         .button-container {
             display: flex;
+            flex-wrap: wrap;
             justify-content: center;
-            gap: 20px;
+            gap: 10px;
             margin-top: 20px;
-            width: 100%;
         }
         button {
             font-size: 1.2em;
-            padding: 10px 20px;
+            padding: 10px 15px;
             cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        @media screen and (max-width: 600px) {
+            .chrono-container {
+                padding: 15px;
+            }
+            .editable, .chrono {
+                font-size: 1.2em;
+            }
+            button {
+                font-size: 1em;
+            }
         }
     </style>
 </head>
@@ -76,118 +88,63 @@
         </div>
     </div>
     <div class="button-container">
-        <button onclick="startStop()">Démarrer/Arrêter (Enter)</button>
-        <button onclick="switchChrono()">Switch (Space)</button>
-        <button onclick="resetChrono()">Réinitialiser (R)</button>
+        <button onclick="startStop()">Démarrer/Arrêter</button>
+        <button onclick="switchChrono()">Switch</button>
+        <button onclick="resetChrono()">Réinitialiser</button>
     </div>
 
     <script>
-        // Définition des objets pour chaque chronomètre
-        const timer1 = {
-            baseTime: 0,    // Temps accumulé (en ms) avant la dernière reprise
-            startTime: null // Instant de démarrage en cours (en ms)
-        };
-        const timer2 = {
-            baseTime: 0,
-            startTime: null
-        };
-
-        let activeChrono = 1; // Chrono actif : 1 ou 2
+        let timers = [{ baseTime: 0, startTime: null }, { baseTime: 0, startTime: null }];
+        let activeChrono = 0;
         let running = false;
         let interval;
 
-        // Fonction de mise à jour des affichages
         function updateChrono() {
-            // Calculer le temps écoulé pour chaque chronomètre (en secondes)
-            let elapsed1 = timer1.baseTime;
-            if (timer1.startTime !== null) {
-                elapsed1 += Date.now() - timer1.startTime;
-            }
-            let elapsed2 = timer2.baseTime;
-            if (timer2.startTime !== null) {
-                elapsed2 += Date.now() - timer2.startTime;
-            }
-            document.getElementById("chrono1").textContent = formatTime(Math.floor(elapsed1 / 1000));
-            document.getElementById("chrono2").textContent = formatTime(Math.floor(elapsed2 / 1000));
+            timers.forEach((timer, index) => {
+                let elapsed = timer.baseTime;
+                if (timer.startTime !== null) elapsed += Date.now() - timer.startTime;
+                document.getElementById(`chrono${index + 1}`).textContent = formatTime(Math.floor(elapsed / 1000));
+            });
         }
 
-        // Fonction de formatage du temps en hh:mm:ss
         function formatTime(seconds) {
             const hrs = Math.floor(seconds / 3600);
             const min = Math.floor((seconds % 3600) / 60);
             const sec = seconds % 60;
-            return hrs + ":" + (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
+            return `${hrs}:${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
         }
 
-        // Démarrage ou arrêt du chronomètre actif
         function startStop() {
             if (!running) {
-                // Démarrage : enregistrer l'instant de départ du chrono actif
-                if (activeChrono === 1) {
-                    timer1.startTime = Date.now();
-                } else {
-                    timer2.startTime = Date.now();
-                }
+                timers[activeChrono].startTime = Date.now();
                 interval = setInterval(updateChrono, 1000);
             } else {
-                // Arrêt : accumuler le temps écoulé et mettre fin à la session en cours
-                if (activeChrono === 1) {
-                    timer1.baseTime += Date.now() - timer1.startTime;
-                    timer1.startTime = null;
-                } else {
-                    timer2.baseTime += Date.now() - timer2.startTime;
-                    timer2.startTime = null;
-                }
+                timers[activeChrono].baseTime += Date.now() - timers[activeChrono].startTime;
+                timers[activeChrono].startTime = null;
                 clearInterval(interval);
             }
             running = !running;
         }
 
-        // Switch entre les deux chronomètres
         function switchChrono() {
             if (running) {
-                // Mettre en pause le chronomètre actif et démarrer l'autre
-                if (activeChrono === 1) {
-                    timer1.baseTime += Date.now() - timer1.startTime;
-                    timer1.startTime = null;
-                    activeChrono = 2;
-                    timer2.startTime = Date.now();
-                } else {
-                    timer2.baseTime += Date.now() - timer2.startTime;
-                    timer2.startTime = null;
-                    activeChrono = 1;
-                    timer1.startTime = Date.now();
-                }
+                timers[activeChrono].baseTime += Date.now() - timers[activeChrono].startTime;
+                timers[activeChrono].startTime = null;
+                activeChrono = activeChrono === 0 ? 1 : 0;
+                timers[activeChrono].startTime = Date.now();
             } else {
-                // Si le chronomètre est arrêté, il suffit de changer l'actif
-                activeChrono = activeChrono === 1 ? 2 : 1;
+                activeChrono = activeChrono === 0 ? 1 : 0;
             }
             updateChrono();
         }
 
-        // Réinitialisation des deux chronomètres
         function resetChrono() {
             clearInterval(interval);
-            timer1.baseTime = 0;
-            timer1.startTime = null;
-            timer2.baseTime = 0;
-            timer2.startTime = null;
+            timers = [{ baseTime: 0, startTime: null }, { baseTime: 0, startTime: null }];
             running = false;
-            activeChrono = 1;
+            activeChrono = 0;
             updateChrono();
         }
-
-        // Gestion des raccourcis clavier
-        document.addEventListener("keydown", function(event) {
-            if (event.key === "Enter") {
-                startStop();
-            } else if (event.key === " ") {
-                event.preventDefault();
-                switchChrono();
-            } else if (event.key.toLowerCase() === "r") {
-                resetChrono();
-            }
-        });
     </script>
 </body>
 </html>
